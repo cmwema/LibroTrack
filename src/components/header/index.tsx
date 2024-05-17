@@ -1,9 +1,10 @@
 import { Button, Stack, Typography, colors } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BreadCrumbs } from "./breadcrumbs";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export const Header = () => {
-  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <Stack
@@ -19,7 +20,12 @@ export const Header = () => {
         paddingX: "1rem",
       }}
     >
-      <BreadCrumbs items={location.pathname.split("/")} />
+      <Stack direction={"row"} gap={2}>
+        <Button variant="text" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </Button>
+        <BreadCrumbs items={location.pathname.split("/")} />
+      </Stack>
       <Stack direction={"row"} gap={2}>
         <Typography variant="h6" color={colors.grey[700]}>
           {new Date().toLocaleDateString()}

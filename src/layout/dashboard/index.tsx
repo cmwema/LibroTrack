@@ -9,7 +9,7 @@ export const DashboardLayout = (): React.ReactNode => {
       sx={{
         width: "100vw",
         height: "100vh",
-        backgroundColor: colors.grey[50],
+        backgroundColor: colors.grey[100],
         display: "grid",
         gridTemplateColumns: "15rem 1fr",
         gridTemplateRows: "5rem 1fr",

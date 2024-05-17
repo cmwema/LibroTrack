@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { members } from "../../utils/members";
 import { Box, Stack, TextField, Typography } from "@mui/material";
 import DataTable, { TableColumn } from "react-data-table-component";
+import { useNavigate } from "react-router-dom";
 
 interface DataRow {
   id: number;
@@ -25,7 +26,7 @@ const columns: TableColumn<DataRow>[] = [
     selector: (row: DataRow) => row.phone,
   },
   {
-    name: "Published Date",
+    name: "Outstanding Debt",
     selector: (row: DataRow) => row.outstanding_debt,
   },
 ];
@@ -41,10 +42,12 @@ const customStyles = {
   },
 };
 
-const handleRowClicked = (row: DataRow) => {
-  console.log("Row clicked:", row);
-};
 export const MembersList = () => {
+  const navigate = useNavigate();
+  const handleRowClicked = (row: DataRow) => {
+    console.log("Row clicked:", row);
+    navigate(`/members/${row.id}`);
+  };
   const [filterText, setFilterText] = useState("");
 
   const filteredItems = members.filter(
@@ -59,10 +62,8 @@ export const MembersList = () => {
         alignItems={"center"}
         sx={{
           width: "100%",
-          padding: "1rem",
         }}
       >
-        <Typography variant="h5">All Members</Typography>
         <TextField
           sx={{ height: "max-content" }}
           placeholder="Search"
@@ -76,7 +77,9 @@ export const MembersList = () => {
   }, [filterText]);
 
   return (
-    <Box sx={{ padding: "1.5rem", backgroundColor: "white" }}>
+    <Box
+      sx={{ padding: "1.5rem", backgroundColor: "white", borderRadius: "1rem" }}
+    >
       <DataTable
         columns={columns}
         data={filteredItems}

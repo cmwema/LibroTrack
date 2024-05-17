@@ -10,6 +10,9 @@ import {
 } from "./pages";
 import { routesEnum } from "./utils/routesEnum";
 import { DashboardLayout } from "./layout";
+import { NewMember } from "./pages/new-member";
+import { NewBook } from "./pages/new-book";
+import { NewTransaction } from "./pages/new_transaction";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,6 +32,10 @@ function App() {
           element: <BookDetails />,
         },
         {
+          path: routesEnum.NEW_BOOK,
+          element: <NewBook />,
+        },
+        {
           path: routesEnum.MEMBERS,
           element: <Members />,
         },
@@ -37,12 +44,20 @@ function App() {
           element: <MemberDetails />,
         },
         {
+          path: routesEnum.NEW_MEMBER,
+          element: <NewMember />,
+        },
+        {
           path: routesEnum.TRANSACTIONS,
           element: <Transactions />,
         },
         {
           path: routesEnum.TRANSACTION_DETAILS,
           element: <TransactionDetails />,
+        },
+        {
+          path: routesEnum.NEW_TRANSACTION,
+          element: <NewTransaction />,
         },
       ],
     },

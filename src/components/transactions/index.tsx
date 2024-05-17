@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { transactions } from "../../utils/transactions";
-import { Box, Stack, TextField, Typography } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import DataTable, { TableColumn } from "react-data-table-component";
+import { useNavigate } from "react-router-dom";
 
 interface DataRow {
+  id: number;
   book: string;
   member: string;
   issue_date: string;
@@ -50,11 +52,11 @@ const customStyles = {
   },
 };
 
-const handleRowClicked = (row: DataRow) => {
-  console.log("Row clicked:", row);
-};
-
 export const TransactionsList = () => {
+  const navigate = useNavigate();
+  const handleRowClicked = (row: DataRow) => {
+    navigate(`/transactions/${row.id}`);
+  };
   const [filterText, setFilterText] = useState("");
 
   const filteredItems = transactions.filter(
@@ -65,30 +67,21 @@ export const TransactionsList = () => {
 
   const subHeaderComponent = useMemo(() => {
     return (
-      <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        sx={{
-          width: "100%",
-          padding: "1rem",
-        }}
-      >
-        <Typography variant="h5">All Transactions</Typography>
-        <TextField
-          sx={{ height: "max-content" }}
-          placeholder="Search"
-          variant="outlined"
-          label="Search"
-          onChange={(e) => setFilterText(e.target.value)}
-          value={filterText}
-        />
-      </Stack>
+      <TextField
+        sx={{ height: "max-content" }}
+        placeholder="Search"
+        variant="outlined"
+        label="Search"
+        onChange={(e) => setFilterText(e.target.value)}
+        value={filterText}
+      />
     );
   }, [filterText]);
 
   return (
-    <Box sx={{ padding: "1.5rem", backgroundColor: "white" }}>
+    <Box
+      sx={{ padding: "10px", backgroundColor: "white", borderRadius: "1rem" }}
+    >
       <DataTable
         columns={columns}
         data={filteredItems}

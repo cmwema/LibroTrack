@@ -1,36 +1,19 @@
-import { Button, Stack, TextField, Typography, colors } from "@mui/material";
-import { useLocation } from "react-router-dom";
-import { members } from "../../utils/members";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import {
   StyledForm,
   StyledFormWrapper,
 } from "../../components/styled-components";
 
-interface Member {
-  id: number;
-  image: string;
-  name: string;
-  outstanding_debt: string;
-  phone: string;
-}
-export const MemberDetails = () => {
-  const location = useLocation();
-  const id = location.pathname.split("/").pop();
-  const memberId = id ? parseInt(id, 10) : null;
-
-  const member = members.filter((member) => member.id === memberId) as Member[];
-
-  const [name, setName] = useState(member[0].name);
-  const [outstanding_debt, setOutstanding_debt] = useState(
-    member[0].outstanding_debt
-  );
-  const [phone, setPhone] = useState(member[0].phone);
+export const NewMember = () => {
+  const [name, setName] = useState("");
+  const [outstanding_debt, setOutstanding_debt] = useState("");
+  const [phone, setPhone] = useState("");
 
   return (
     <StyledFormWrapper>
       <StyledForm gap={4}>
-        <Typography variant="h6">Member Details</Typography>
+        <Typography variant="h6">New Member</Typography>
         <TextField
           value={name}
           label="Name"
@@ -59,10 +42,7 @@ export const MemberDetails = () => {
           direction={"row"}
           sx={{ width: "50%", justifyContent: "space-between" }}
         >
-          <Button variant="outlined" color="error">
-            Delete
-          </Button>
-          <Button variant="contained">Edit</Button>
+          <Button variant="contained">Add</Button>
         </Stack>
       </StyledForm>
     </StyledFormWrapper>
