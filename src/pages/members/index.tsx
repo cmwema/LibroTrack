@@ -1,5 +1,10 @@
-import { Typography } from "@mui/material";
+import { Stack } from "@mui/material";
+import { MembersList } from "../../components/members-list";
 
 export const Members = () => {
-  return <Typography variant="h1">Members</Typography>;
+  return (
+    <Stack sx={{ padding: "1rem" }}>
+      <MembersList />
+    </Stack>
+  );
 };
