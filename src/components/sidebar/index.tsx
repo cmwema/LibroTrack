@@ -35,7 +35,12 @@ export const SideBar = () => {
         </Box>
         <List>
           {navItems.map((item) => (
-            <NavItem title={item.title} Icon={item.Icon} link={item.link} />
+            <NavItem
+              key={item.title}
+              title={item.title}
+              Icon={item.Icon}
+              link={item.link}
+            />
           ))}
         </List>
       </Stack>
