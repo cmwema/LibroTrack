@@ -20,7 +20,7 @@ export const Login = () => {
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log({ email, password });
-    navigate(routesEnum.DASHBOARD);
+    navigate(routesEnum.BOOKS);
   };
   return (
     <AuthLayout>

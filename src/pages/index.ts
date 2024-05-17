@@ -1,6 +1,5 @@
 export { Login } from "./auth/login/index";
 export { PasswordReset } from "./auth/password-reset/index";
-export { Dashboard } from "./dashboard/index";
 export { Books } from "./books/index";
 export { BookDetails } from "./book-details/index";
 export { Members } from "./members/index";

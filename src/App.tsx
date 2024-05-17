@@ -2,11 +2,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
   BookDetails,
   Books,
-  Dashboard,
   Login,
   MemberDetails,
   Members,
-  PasswordReset,
   TransactionDetails,
   Transactions,
 } from "./pages";
@@ -22,14 +20,6 @@ function App() {
     {
       element: <DashboardLayout />,
       children: [
-        {
-          path: routesEnum.PASSWORD_REST,
-          element: <PasswordReset />,
-        },
-        {
-          path: routesEnum.DASHBOARD,
-          element: <Dashboard />,
-        },
         {
           path: routesEnum.BOOKS,
           element: <Books />,

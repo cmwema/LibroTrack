@@ -1,8 +1,6 @@
 export enum routesEnum {
   LOGIN = "/",
   PASSWORD_REST = "/password-reset",
-  DASHBOARD = "/dashboard",
-
   BOOKS = "/books",
   NEW_BOOK = "/books/new",
   BOOK_DETAILS = "/books/:id",
