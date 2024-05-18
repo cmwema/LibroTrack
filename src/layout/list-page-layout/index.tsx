@@ -1,9 +1,9 @@
-import { Stack, Typography, colors } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import React from "react";
 interface LayoutProps {
   title: string;
   children: React.ReactNode;
-  ButtonComponent: React.ComponentType;
+  ButtonComponent?: React.ComponentType;
 }
 
 export const Layout = ({ title, children, ButtonComponent }: LayoutProps) => {
@@ -21,9 +21,11 @@ export const Layout = ({ title, children, ButtonComponent }: LayoutProps) => {
         }}
       >
         <Typography variant="h6">{title}</Typography>
-        <ButtonComponent />
+        {ButtonComponent && <ButtonComponent />}
       </Stack>
-      <Stack>{children}</Stack>
+      <Stack sx={{ backgroundColor: "white", borderRadius: "1rem" }}>
+        {children}
+      </Stack>
     </Stack>
   );
 };

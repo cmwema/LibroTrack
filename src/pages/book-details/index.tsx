@@ -1,95 +1,148 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import {
-  StyledForm,
-  StyledFormWrapper,
-} from "../../components/styled-components";
-import { useLocation } from "react-router-dom";
-import { books } from "../../utils/books";
-import { useState } from "react";
-
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  isbn: string;
-  published_date: string;
-  stock: number;
-  genre: string;
-  image: string;
-}
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  useBookDetailsQuery,
+  useDeleteBookMutation,
+} from "../../store/api-slice";
+import { Layout } from "../../layout";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { RootState } from "../../store";
+import { setChanged } from "../../store/crud-slice";
+import toast from "react-hot-toast";
+import { routesEnum } from "../../utils/routesEnum";
 
 export const BookDetails = () => {
   const location = useLocation();
   const id = location.pathname.split("/").pop();
-  const bookId = id ? parseInt(id, 10) : null;
+  const navigate = useNavigate();
+  const { data, isSuccess, isLoading, refetch } = useBookDetailsQuery({
+    book_id: id,
+  });
+  const [deleteBook] = useDeleteBookMutation();
+  const changed = useSelector((state: RootState) => state.crud.changed);
+  const dispatch = useDispatch();
+  const [submit, setSubmit] = useState(false);
 
-  const book = books.filter((book) => book.id === bookId) as Book[];
-  const [title, setTitle] = useState(book[0].title);
-  const [author, setAuthor] = useState(book[0].author);
-  const [isbn, setIsbn] = useState(book[0].isbn);
-  const [published_date, setPublished_date] = useState(book[0].published_date);
-  const [stock, setStock] = useState(`${book[0].stock}`);
-  const [genre, setGenre] = useState(book[0].genre);
+  useEffect(() => {
+    refetch();
+    dispatch(setChanged(false));
+  }, [changed]);
 
-  return (
-    <StyledFormWrapper>
-      <StyledForm gap={4}>
-        <Typography variant="h5">Book Details</Typography>
-
-        <TextField
-          fullWidth
-          label="title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <TextField
-          fullWidth
-          label="author"
-          type="text"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-        />
-
-        <TextField
-          fullWidth
-          label="ISBN"
-          type="text"
-          value={isbn}
-          onChange={(e) => setIsbn(e.target.value)}
-        />
-        <TextField
-          fullWidth
-          label="Stock"
-          type="text"
-          value={stock}
-          onChange={(e) => setStock(e.target.value)}
-        />
-
-        <TextField
-          type="text"
-          value={published_date}
-          onChange={(e) => setPublished_date(e.target.value)}
-          label="Published Date"
-        />
-        <TextField
-          fullWidth
-          label="Genre"
-          type="text"
-          value={genre}
-          onChange={(e) => setGenre(e.target.value)}
-        />
-        <Stack
-          direction="row"
-          justifyContent={"space-between"}
-          sx={{ width: "40%" }}
-        >
-          <Button variant="contained" color="error">
-            Delete
-          </Button>
-          <Button variant="contained">Edit</Button>
+  const handleDelete = async () => {
+    try {
+      setSubmit(false);
+      toast.loading("Deleting...");
+      await deleteBook({ book_id: data.id });
+      navigate(routesEnum.BOOKS);
+      toast.dismiss();
+      toast.success("Book Deleted successfully.");
+      dispatch(setChanged(true));
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Error occured");
+    }
+  };
+  if (isLoading) {
+    return (
+      <Layout title={"Book Details"}>
+        <Stack sx={{ padding: "4rem" }} gap={2}>
+          Loading...
         </Stack>
-      </StyledForm>
-    </StyledFormWrapper>
-  );
+      </Layout>
+    );
+  }
+  if (isSuccess) {
+    return (
+      <Layout title={"Book Details"}>
+        <Stack sx={{ padding: "4rem" }} gap={2}>
+          <List>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Title
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                <Typography variant="h6">{data.title}</Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Author
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                <Typography variant="h6">{data.author}</Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  ISBN
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                <Typography variant="h6">{data.isbn}</Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Published Date
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                <Typography variant="h6">{data.published_date}</Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  In Stock
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                <Typography variant="h6">{data.stock}</Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Genre
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                <Typography variant="h6">{data.genre}</Typography>
+              </ListItemText>
+            </ListItem>
+          </List>
+          <Stack direction="row" gap={4}>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleDelete}
+              disabled={submit}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => navigate(`/books/edit/${data.id}`)}
+            >
+              Edit
+            </Button>
+          </Stack>
+        </Stack>
+      </Layout>
+    );
+  }
 };

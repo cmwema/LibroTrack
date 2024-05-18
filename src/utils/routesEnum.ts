@@ -4,7 +4,7 @@ export enum routesEnum {
   BOOKS = "/books",
   NEW_BOOK = "/books/new",
   BOOK_DETAILS = "/books/:id",
-  EDIT_BOOK = "/books/:id/edit",
+  EDIT_BOOK = "/books/edit/:id",
   DELETE_BOOK = "/books/:id/delete",
 
   MEMBERS = "/members",
