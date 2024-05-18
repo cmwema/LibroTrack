@@ -13,6 +13,7 @@ import { DashboardLayout } from "./layout";
 import { NewMember } from "./pages/new-member";
 import { NewBook } from "./pages/new-book";
 import { NewTransaction } from "./pages/new_transaction";
+import ProtectedRoute from "./components/auth/protected-route";
 
 function App() {
   const router = createBrowserRouter([
@@ -21,7 +22,7 @@ function App() {
       element: <Login />,
     },
     {
-      element: <DashboardLayout />,
+      element: <ProtectedRoute element={<DashboardLayout />} />,
       children: [
         {
           path: routesEnum.BOOKS,

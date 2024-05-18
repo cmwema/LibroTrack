@@ -2,9 +2,14 @@ import { Button, Stack, Typography, colors } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { BreadCrumbs } from "./breadcrumbs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { routesEnum } from "../../utils/routesEnum";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate(routesEnum.LOGIN);
+  };
 
   return (
     <Stack
@@ -30,11 +35,8 @@ export const Header = () => {
         <Typography variant="h6" color={colors.grey[700]}>
           {new Date().toLocaleDateString()}
         </Typography>
-        <Typography variant="h6" color={colors.grey[700]}>
-          Caleb Mwema
-        </Typography>
 
-        <Button variant="outlined" color="error">
+        <Button variant="outlined" color="error" onClick={handleLogout}>
           Log Out
         </Button>
       </Stack>

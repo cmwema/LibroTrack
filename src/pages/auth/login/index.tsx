@@ -10,17 +10,39 @@ import { AuthLayout } from "../../../layout";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { routesEnum } from "../../../utils/routesEnum";
+import { useLoginMutation } from "../../../store/api-slice";
+import toast from "react-hot-toast";
 
+type LoginResult = {
+  data: {
+    token: string;
+  };
+};
 export const Login = () => {
-  const [email, setEmail] = useState("xyz@example.com");
-  const [password, setPassword] = useState("12345678");
+  const [username, setUsername] = useState("mwema");
+  const [password, setPassword] = useState("@Test1234");
+  const [submit, setSubmit] = useState(false);
+  const [login] = useLoginMutation();
 
   const navigate = useNavigate();
 
-  const handleFormSubmit = (e: FormEvent) => {
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
-    navigate(routesEnum.BOOKS);
+    try {
+      setSubmit(true);
+      toast.loading("Authenticating...");
+      const result = (await login({ username, password })) as LoginResult;
+      if (result.data.token) {
+        toast.dismiss();
+        toast.success("Loggin successful!");
+        setSubmit(false);
+        localStorage.setItem("token", result.data.token);
+        navigate(routesEnum.BOOKS);
+      }
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Error occured.");
+    }
   };
   return (
     <AuthLayout>
@@ -41,14 +63,13 @@ export const Login = () => {
         <Typography variant="h6">Welcome Back</Typography>
         <Typography variant="h4">Log In</Typography>
         <TextField
-          label="Email"
+          label="Username"
           variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          helperText="Enter your email address."
-          placeholder="xyz@example.com"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          helperText="Enter your username"
           required
-          type="email"
+          type="text"
         />
         <TextField
           label="Password"
@@ -56,7 +77,6 @@ export const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           helperText="Enter a valid password"
-          placeholder="***********"
           required
           type="password"
         />
@@ -65,7 +85,16 @@ export const Login = () => {
           sx={{ width: "100%" }}
           justifyContent="space-between"
         >
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: `${
+                submit ? colors.grey[100] : colors.blue[400]
+              }`,
+            }}
+            type="submit"
+            disabled={submit}
+          >
             Login
           </Button>
         </Stack>
