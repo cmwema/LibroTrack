@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  useDeleteBookMutation,
   useDeleteMemberMutation,
   useMemberDetailsQuery,
 } from "../../store/api-slice";
