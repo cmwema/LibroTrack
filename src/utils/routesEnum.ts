@@ -10,7 +10,7 @@ export enum routesEnum {
   MEMBERS = "/members",
   MEMBER_DETAILS = "/members/:id",
   NEW_MEMBER = "/members/new",
-  EDIT_MEMBER = "/members/:id/edit",
+  EDIT_MEMBER = "/members/edit/:id",
   DELETE_MEMBER = "/members/:id/delete",
 
   TRANSACTIONS = "/transactions",

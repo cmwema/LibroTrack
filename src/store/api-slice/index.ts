@@ -18,6 +18,26 @@ type EditBook = {
   book: Book;
 };
 
+export type Member = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  debt: number;
+};
+
+type NewMember = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  debt: number;
+};
+
+export type EditMember = {
+  id: string;
+  member: Member;
+};
+
 const getToken = () => localStorage.getItem("token") || "";
 
 export const apiSlice = createApi({
@@ -89,14 +109,63 @@ export const apiSlice = createApi({
         };
       },
     }),
+    membersList: builder.query({
+      query: () => {
+        return {
+          url: "members",
+          method: "GET",
+        };
+      },
+    }),
+    memberDetails: builder.query({
+      query: (id: string) => {
+        return {
+          url: `members/${id}`,
+          method: "GET",
+        };
+      },
+    }),
+    newMember: builder.mutation({
+      query: (body: NewMember) => {
+        return {
+          url: "members/",
+          method: "POST",
+          body: body,
+        };
+      },
+    }),
+    editMember: builder.mutation({
+      query: ({ id, first_name, last_name, email, debt }: Member) => {
+        return {
+          url: `members/${id}/`,
+          method: "PUT",
+          body: { id, first_name, last_name, email, debt },
+        };
+      },
+    }),
+    deleteMember: builder.mutation({
+      query: (id: string) => {
+        return {
+          url: `members/${id}/`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
 });
 
 export const {
   useLoginMutation,
+  // books
   useBooksListQuery,
   useBookDetailsQuery,
   useNewBookMutation,
   useEditBookMutation,
   useDeleteBookMutation,
+  // members
+  useMembersListQuery,
+  useNewMemberMutation,
+  useEditMemberMutation,
+  useMemberDetailsQuery,
+  useDeleteMemberMutation,
 } = apiSlice;

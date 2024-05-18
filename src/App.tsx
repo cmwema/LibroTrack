@@ -15,6 +15,7 @@ import { NewBook } from "./pages/new-book";
 import { NewTransaction } from "./pages/new_transaction";
 import ProtectedRoute from "./components/auth/protected-route";
 import { BookEdit } from "./pages/book-edit";
+import { MemberEdit } from "./pages/member-edit";
 
 function App() {
   const router = createBrowserRouter([
@@ -48,6 +49,10 @@ function App() {
         {
           path: routesEnum.MEMBER_DETAILS,
           element: <MemberDetails />,
+        },
+        {
+          path: routesEnum.EDIT_MEMBER,
+          element: <MemberEdit />,
         },
         {
           path: routesEnum.NEW_MEMBER,

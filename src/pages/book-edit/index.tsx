@@ -9,7 +9,6 @@ export const BookEdit = () => {
   const { data, isSuccess } = useBookDetailsQuery({ book_id: id });
 
   if (isSuccess) {
-    console.log(data);
     return (
       <StyledFormWrapper>
         <BookForm isEdit={true} book={data} />

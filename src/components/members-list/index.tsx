@@ -1,33 +1,36 @@
-import { useMemo, useState } from "react";
-import { members } from "../../utils/members";
-import { Box, Stack, TextField, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { Box, Stack, TextField } from "@mui/material";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { useMembersListQuery } from "../../store/api-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { setChanged } from "../../store/crud-slice";
 
 interface DataRow {
-  id: number;
-  name: string;
+  id: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  phone: string;
-  outstanding_debt: string;
+  debt: number;
 }
 
 const columns: TableColumn<DataRow>[] = [
   {
-    name: "Name",
-    selector: (row: DataRow) => row.name,
+    name: "First Name",
+    selector: (row: DataRow) => row.first_name,
+  },
+  {
+    name: "Last Name",
+    selector: (row: DataRow) => row.last_name,
   },
   {
     name: "Email",
     selector: (row: DataRow) => row.email,
   },
   {
-    name: "Phone",
-    selector: (row: DataRow) => row.phone,
-  },
-  {
     name: "Outstanding Debt",
-    selector: (row: DataRow) => row.outstanding_debt,
+    selector: (row: DataRow) => row.debt,
   },
 ];
 
@@ -45,15 +48,17 @@ const customStyles = {
 export const MembersList = () => {
   const navigate = useNavigate();
   const handleRowClicked = (row: DataRow) => {
-    console.log("Row clicked:", row);
     navigate(`/members/${row.id}`);
   };
   const [filterText, setFilterText] = useState("");
+  const { data, isSuccess, isLoading, refetch } = useMembersListQuery({});
+  const dispatch = useDispatch();
+  const changed = useSelector((state: RootState) => state.crud.changed);
 
-  const filteredItems = members.filter(
-    (item) =>
-      item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  useEffect(() => {
+    refetch();
+    dispatch(setChanged(false));
+  }, [changed]);
   const subHeaderComponent = useMemo(() => {
     return (
       <Stack
@@ -75,21 +80,46 @@ export const MembersList = () => {
       </Stack>
     );
   }, [filterText]);
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          padding: "4rem",
+          backgroundColor: "white",
+          borderRadius: "1rem",
+        }}
+      >
+        Loading...
+      </Box>
+    );
+  }
+  if (isSuccess) {
+    const filteredItems = data.filter(
+      (item: DataRow) =>
+        item.first_name.toLowerCase().includes(filterText.toLowerCase()) ||
+        item.last_name.toLowerCase().includes(filterText.toLowerCase()) ||
+        item.email.toLowerCase().includes(filterText.toLowerCase())
+    );
 
-  return (
-    <Box
-      sx={{ padding: "1.5rem", backgroundColor: "white", borderRadius: "1rem" }}
-    >
-      <DataTable
-        columns={columns}
-        data={filteredItems}
-        pagination
-        fixedHeader
-        subHeader
-        onRowClicked={handleRowClicked}
-        customStyles={customStyles}
-        subHeaderComponent={subHeaderComponent}
-      />
-    </Box>
-  );
+    return (
+      <Box
+        sx={{
+          padding: "1.5rem",
+          backgroundColor: "white",
+          borderRadius: "1rem",
+        }}
+      >
+        <DataTable
+          columns={columns}
+          data={filteredItems}
+          pagination
+          fixedHeader
+          subHeader
+          onRowClicked={handleRowClicked}
+          customStyles={customStyles}
+          subHeaderComponent={subHeaderComponent}
+        />
+      </Box>
+    );
+  }
 };

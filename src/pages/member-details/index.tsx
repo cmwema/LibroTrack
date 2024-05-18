@@ -1,70 +1,115 @@
-import { Button, Stack, TextField, Typography, colors } from "@mui/material";
-import { useLocation } from "react-router-dom";
-import { members } from "../../utils/members";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  StyledForm,
-  StyledFormWrapper,
-} from "../../components/styled-components";
+  useDeleteBookMutation,
+  useDeleteMemberMutation,
+  useMemberDetailsQuery,
+} from "../../store/api-slice";
+import { Layout } from "../../layout";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+  Button,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { setChanged } from "../../store/crud-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store";
+import toast from "react-hot-toast";
+import { routesEnum } from "../../utils/routesEnum";
 
-interface Member {
-  id: number;
-  image: string;
-  name: string;
-  outstanding_debt: string;
-  phone: string;
-}
 export const MemberDetails = () => {
   const location = useLocation();
-  const id = location.pathname.split("/").pop();
-  const memberId = id ? parseInt(id, 10) : null;
+  const id = location.pathname.split("/").pop() || "";
+  const { data, isSuccess, isLoading, refetch } = useMemberDetailsQuery(id);
+  const [deleteMember] = useDeleteMemberMutation();
+  const [submit, setSubmit] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const changed = useSelector((state: RootState) => state.crud.changed);
 
-  const member = members.filter((member) => member.id === memberId) as Member[];
+  useEffect(() => {
+    refetch();
+    dispatch(setChanged(false));
+  }, [changed]);
 
-  const [name, setName] = useState(member[0].name);
-  const [outstanding_debt, setOutstanding_debt] = useState(
-    member[0].outstanding_debt
-  );
-  const [phone, setPhone] = useState(member[0].phone);
-
-  return (
-    <StyledFormWrapper>
-      <StyledForm gap={4}>
-        <Typography variant="h6">Member Details</Typography>
-        <TextField
-          value={name}
-          label="Name"
-          onChange={(e) => setName(e.target.value)}
-          variant="outlined"
-          fullWidth
-          type="text"
-        />
-        <TextField
-          value={outstanding_debt}
-          label="Out standing Debt"
-          onChange={(e) => setOutstanding_debt(e.target.value)}
-          variant="outlined"
-          fullWidth
-          type="text"
-        />
-        <TextField
-          value={phone}
-          label="Phone"
-          onChange={(e) => setPhone(e.target.value)}
-          variant="outlined"
-          fullWidth
-          type="text"
-        />
-        <Stack
-          direction={"row"}
-          sx={{ width: "50%", justifyContent: "space-between" }}
-        >
-          <Button variant="outlined" color="error">
-            Delete
-          </Button>
-          <Button variant="contained">Edit</Button>
+  if (isLoading) {
+    return (
+      <Layout title="Member Details">
+        <Stack sx={{ padding: "4rem" }} gap={4}>
+          Loading...
         </Stack>
-      </StyledForm>
-    </StyledFormWrapper>
-  );
+      </Layout>
+    );
+  }
+  if (isSuccess) {
+    const handleDelete = async () => {
+      try {
+        setSubmit(true);
+        toast.loading("deleting...");
+        await deleteMember(data.id);
+        toast.dismiss();
+        toast.success("Member deleted Successfully!");
+        dispatch(setChanged(true));
+        navigate(routesEnum.MEMBERS);
+      } catch (error) {
+        toast.dismiss();
+        toast.success("Member deleted Successfully!");
+        dispatch(setChanged(true));
+        navigate(routesEnum.MEMBERS);
+      }
+    };
+    return (
+      <Layout title="Member Details">
+        <Stack sx={{ padding: "4rem" }} gap={2}>
+          <List>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Full Name
+                </Typography>
+              </ListItemText>
+              <ListItemText>
+                {data.first_name} {data.last_name}
+              </ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Email
+                </Typography>
+              </ListItemText>
+              <ListItemText>{data.email}</ListItemText>
+            </ListItem>
+            <ListItem>
+              <ListItemText>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Debt
+                </Typography>
+              </ListItemText>
+              <ListItemText>{data.debt}</ListItemText>
+            </ListItem>
+          </List>
+          <Stack direction="row" gap={4}>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleDelete}
+              disabled={submit}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => navigate(`/members/edit/${data.id}`)}
+            >
+              Edit
+            </Button>
+          </Stack>
+        </Stack>
+      </Layout>
+    );
+  }
 };
