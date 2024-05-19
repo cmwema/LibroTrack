@@ -16,6 +16,6 @@ export enum routesEnum {
   TRANSACTIONS = "/transactions",
   TRANSACTION_DETAILS = "/transactions/:id",
   NEW_TRANSACTION = "/transactions/new",
-  EDIT_TRANSACTION = "/transactions/:id/edit",
+  EDIT_TRANSACTION = "/transactions/edit/:id",
   DELETE_TRANSACTION = "/transactions/:id/delete",
 }

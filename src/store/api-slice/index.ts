@@ -33,6 +33,25 @@ type NewMember = {
   debt: number;
 };
 
+export type Transaction = {
+  member: string;
+  book: string;
+  issue_date: string;
+  due_date: string;
+  return_date: string;
+  fee: string;
+  paid: boolean;
+};
+export type EditTransaction = {
+  id: string;
+  member: string;
+  book: string;
+  issue_date: string;
+  due_date: string;
+  return_date: string;
+  fee: string;
+  paid: boolean;
+};
 export type EditMember = {
   id: string;
   member: Member;
@@ -55,6 +74,7 @@ export const apiSlice = createApi({
   }),
 
   endpoints: (builder) => ({
+    // auth
     login: builder.mutation({
       query: ({ username, password }: Login) => {
         return {
@@ -67,6 +87,7 @@ export const apiSlice = createApi({
         };
       },
     }),
+    // books
     booksList: builder.query({
       query: () => {
         return {
@@ -109,6 +130,7 @@ export const apiSlice = createApi({
         };
       },
     }),
+    // members
     membersList: builder.query({
       query: () => {
         return {
@@ -151,6 +173,47 @@ export const apiSlice = createApi({
         };
       },
     }),
+
+    // transactions
+    transactionsList: builder.query({
+      query: () => {
+        return { url: "transactions", method: "GET" };
+      },
+    }),
+    newTransaction: builder.mutation({
+      query: (transaction: Transaction) => {
+        return {
+          url: "transactions/",
+          method: "POST",
+          body: transaction,
+        };
+      },
+    }),
+    transactionDetails: builder.query({
+      query: (id: string) => {
+        return {
+          url: `transactions/${id}`,
+          method: "GET",
+        };
+      },
+    }),
+    editTransaction: builder.mutation({
+      query: (transaction: EditTransaction) => {
+        return {
+          url: `transactions/${transaction.id}/`,
+          method: "PUT",
+          body: transaction,
+        };
+      },
+    }),
+    deleteTransaction: builder.mutation({
+      query: (id: string) => {
+        return {
+          url: `transactions/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
 });
 
@@ -168,4 +231,10 @@ export const {
   useEditMemberMutation,
   useMemberDetailsQuery,
   useDeleteMemberMutation,
+  // transactions
+  useTransactionsListQuery,
+  useTransactionDetailsQuery,
+  useNewTransactionMutation,
+  useEditTransactionMutation,
+  useDeleteTransactionMutation,
 } = apiSlice;

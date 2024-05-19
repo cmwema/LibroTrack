@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { TransactionsList } from "../../components/transactions";
+import { TransactionsList } from "../../components/transactions-list";
 import { Layout } from "../../layout";
 import { useNavigate } from "react-router-dom";
 import { routesEnum } from "../../utils/routesEnum";
