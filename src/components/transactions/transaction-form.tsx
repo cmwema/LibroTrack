@@ -71,6 +71,12 @@ export const TransactionForm = ({
   const handleSubmit = async () => {
     try {
       let result;
+      // @ts-ignore
+      const selectedMember = members.filter((item) => item.id === member)[0];
+      if (parseFloat(selectedMember.debt) > 500) {
+        toast.error("Member debt too high");
+        return;
+      }
       if (!edit) {
         toast.loading("Adding...");
         setSubmit(true);
