@@ -91,7 +91,7 @@ export const TransactionsList = () => {
   if (isLoading) {
     return (
       <Box
-        sx={{ padding: "2rem", backgroundColor: "white", borderRadius: "1rem" }}
+        sx={{ padding: "4rem", backgroundColor: "white", borderRadius: "1rem" }}
       >
         Loading...
       </Box>

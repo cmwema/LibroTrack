@@ -20,7 +20,7 @@ export const MemberForm = ({ edit, member }: MemberProps) => {
   const [firstName, setFirstName] = useState(member ? member.first_name : "");
   const [lastName, setLastName] = useState(member ? member.last_name : "");
   const [email, setEmail] = useState(member ? member.email : "");
-  const [debt, setDebt] = useState(member ? member.debt.toString() : "");
+  const [debt, setDebt] = useState(member ? member.debt.toString() : "0");
   const [submit, setSubmit] = useState(false);
   const [newMember] = useNewMemberMutation();
   const [editMember] = useEditMemberMutation();
@@ -98,6 +98,7 @@ export const MemberForm = ({ edit, member }: MemberProps) => {
         variant="outlined"
         fullWidth
         type="number"
+        disabled={edit ? false : true}
       />
 
       <Stack

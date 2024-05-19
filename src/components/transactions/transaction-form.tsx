@@ -8,12 +8,13 @@ import {
   useMembersListQuery,
   useNewTransactionMutation,
 } from "../../store/api-slice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setChanged } from "../../store/crud-slice";
 import { routesEnum } from "../../utils/routesEnum";
+import { RootState } from "../../store";
 
 type TransactionFormProps = {
   edit: boolean;
@@ -35,8 +36,18 @@ export const TransactionForm = ({
 }: TransactionFormProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { data: books, isSuccess: booksSuccess } = useBooksListQuery({});
-  const { data: members, isSuccess: membersSuccess } = useMembersListQuery({});
+  const {
+    data: books,
+    isSuccess: booksSuccess,
+    isLoading: booksLoading,
+    refetch: refetchBooks,
+  } = useBooksListQuery({});
+  const {
+    data: members,
+    isSuccess: membersSuccess,
+    isLoading: membersLoading,
+    refetch: refetchMembers,
+  } = useMembersListQuery({});
   const [newTransaction] = useNewTransactionMutation();
   const [editTransaction] = useEditTransactionMutation();
   const [member, setMember] = useState(`${edit ? transaction?.member : ""}`);
@@ -49,6 +60,13 @@ export const TransactionForm = ({
   const [fee, setFee] = useState(`${edit ? transaction?.fee : ""}`);
   const [paid, setPaid] = useState(`${edit ? transaction?.paid : false}`);
   const [submit, setSubmit] = useState(false);
+  const changed = useSelector((state: RootState) => state.crud.changed);
+
+  useEffect(() => {
+    refetchMembers();
+    refetchBooks();
+    dispatch(setChanged(false));
+  }, [changed]);
 
   const handleSubmit = async () => {
     try {
@@ -63,7 +81,7 @@ export const TransactionForm = ({
           due_date: due,
           return_date: returnDate,
           fee,
-          paid: paid ? true : false,
+          paid: false,
         });
       } else if (edit && transaction) {
         toast.loading("Updating...");
@@ -90,6 +108,9 @@ export const TransactionForm = ({
       toast.error("Error occured");
     }
   };
+  if (booksLoading || membersLoading) {
+    return <StyledForm sx={{ padding: "2rem" }}>Loading...</StyledForm>;
+  }
 
   if (membersSuccess && booksSuccess) {
     return (
