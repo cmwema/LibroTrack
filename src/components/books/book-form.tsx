@@ -67,7 +67,7 @@ export const BookForm = ({ book, isEdit = false }: BookFormProps) => {
 
   return (
     <StyledForm gap={4}>
-      <Typography variant="h6">New Book</Typography>
+      <Typography variant="h6">{isEdit ? "Edit Book" : "New Book"}</Typography>
       <Stack
         direction="row"
         justifyContent={"space-evenly"}
@@ -135,7 +135,7 @@ export const BookForm = ({ book, isEdit = false }: BookFormProps) => {
       </Stack>
 
       <Button variant="contained" disabled={submit} onClick={handleSubmit}>
-        Add
+        {isEdit ? "update" : "add"}
       </Button>
     </StyledForm>
   );
